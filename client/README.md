@@ -1,63 +1,23 @@
-# Jogo de Terminal em Go
+# Client — Jogo de Terminal em Go (modo multiplayer via RPC)
 
-Este projeto é um pequeno jogo desenvolvido em Go que roda no terminal usando a biblioteca [termbox-go](https://github.com/nsf/termbox-go). O jogador controla um personagem que pode se mover por um mapa carregado de um arquivo de texto.
+Este client renderiza e executa **toda a lógica do jogo** (mapa, movimentos, inimigos, HUD) no terminal com `termbox-go`.  
+A **sincronização multiplayer** é feita por RPC com um servidor que mantém **apenas o estado compartilhado** (posições dos jogadores).
 
-## Como funciona
+> Controles do jogo (inalterados): **W/A/S/D** movem, **E** interage (local), **ESC** sai. :contentReference[oaicite:0]{index=0}
 
-- O mapa é carregado de um arquivo `.txt` contendo caracteres que representam diferentes elementos do jogo.
-- O personagem se move com as teclas **W**, **A**, **S**, **D**.
-- Pressione **E** para interagir com o ambiente.
-- Pressione **ESC** para sair do jogo.
+## Requisitos
+- Go 1.21+ (ou superior)
+- Windows, macOS ou Linux
+- Terminal “puro” recomendado (no Windows, PowerShell ou Windows Terminal)  
+- Arquivo `mapa.txt` presente na pasta do client (qualquer mapa válido)
 
-### Controles
+## Como funciona (arquitetura)
+- **Cliente (este projeto):** desenha interface, lê teclado, move jogador local, move inimigos, e **envia/recebe posições** por RPC.
+- **Servidor:** não tem GUI nem mapa; apenas guarda as **posições dos jogadores** e responde a RPC.
+- **Polling:** o client faz uma consulta periódica (~80ms) para obter **outros** jogadores conectados.
+- **Exactly-once (escrita):** cada envio de posição usa um `SequenceNum` único; em falha de rede, o client reenvia **com o mesmo** número.
 
-| Tecla | Ação                  |
-|-------|-----------------------|
-| W     | Mover para cima       |
-| A     | Mover para esquerda   |
-| S     | Mover para baixo      |
-| D     | Mover para direita    |
-| E     | Interagir             |
-| ESC   | Sair do jogo          |
-
-## Como compilar
-
-1. Instale o Go e clone este repositório.
-2. Inicialize um novo módulo "jogo":
-
+## Instalação
 ```bash
-go mod init jogo
-go get -u github.com/nsf/termbox-go
-```
-
-3. Compile o programa:
-
-Linux:
-
-```bash
-go build -o jogo
-```
-
-Windows:
-
-```bash
-go build -o jogo.exe
-```
-
-Também é possivel compilar o projeto usando o comando `make` no Linux ou o script `build.bat` no Windows.
-
-## Como executar
-
-1. Certifique-se de ter o arquivo `mapa.txt` com um mapa válido.
-2. Execute o programa no termimal:
-
-```bash
-./jogo
-```
-
-## Estrutura do projeto
-
-- main.go — Ponto de entrada e loop principal
-- interface.go — Entrada, saída e renderização com termbox
-- jogo.go — Estruturas e lógica do estado do jogo
-- personagem.go — Ações do jogador
+# dentro da pasta client
+go mod tidy    # baixa termbox-go e dependências
