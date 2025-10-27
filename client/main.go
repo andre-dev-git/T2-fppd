@@ -141,9 +141,6 @@ func main() {
 	if len(j.Jog) < 1 {
 		j.Jog = append(j.Jog, Posicao{})
 	}
-	if len(j.Jog) < 2 {
-		j.Jog = append(j.Jog, Posicao{})
-	}
 
 	playerID := generateClientPlayerID()
 	addr := defaultAddr(host, port)
@@ -177,19 +174,20 @@ func main() {
 			if err != nil {
 				continue
 			}
-			updated := false
+
+			j.Lock()
+			if len(j.Jog) < 1 {
+				j.Jog = append(j.Jog, Posicao{})
+			}
+			j.Jog = j.Jog[:1]
+
 			for _, op := range others {
 				if op == nil || op.ID == playerID {
 					continue
 				}
-				j.Jog[1].PosX = int(op.X)
-				j.Jog[1].PosY = int(op.Y)
-				updated = true
-				break
+				j.Jog = append(j.Jog, Posicao{PosX: int(op.X), PosY: int(op.Y)})
 			}
-			if !updated {
-				j.Jog[1] = Posicao{}
-			}
+			j.Unlock()
 		}
 	}()
 

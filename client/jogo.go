@@ -120,7 +120,7 @@ func jogoCarregarMapa(nome string, jogo *Jogo) error {
 }
 
 func jogoPodeMoverPara(jogo *Jogo, x, y int, isPlayer bool) bool {
-	Destino := Posicao{PosX: x, PosY: y} //adaptado do COPILOT
+	Destino := Posicao{PosX: x, PosY: y}
 
 	if y < 0 || y >= len(jogo.Mapa) || x < 0 || x >= len(jogo.Mapa[y]) {
 		return false
@@ -133,9 +133,11 @@ func jogoPodeMoverPara(jogo *Jogo, x, y int, isPlayer bool) bool {
 			return false
 		}
 	} else {
-		if Destino == jogo.Jog[0] || Destino == jogo.Jog[1] {
-			jogoFim(jogo)
-			return false
+		for _, pj := range jogo.Jog {
+			if Destino == pj {
+				jogoFim(jogo)
+				return false
+			}
 		}
 	}
 
@@ -204,8 +206,11 @@ func fazerLava(jogo *Jogo) {
 					for linha := y[i] + 1; linha < len(jogo.Mapa); linha++ {
 						time.Sleep(1 * time.Second)
 						posLava := Posicao{PosX: x[i], PosY: linha}
-						if (jogo.Jog[0] == posLava) || (jogo.Jog[1] == posLava) {
-							jogoFim(jogo)
+						for _, pj := range jogo.Jog {
+							if pj == posLava {
+								jogoFim(jogo)
+								break
+							}
 						}
 						jogo.Mapa[linha][x[i]] = Lava
 						interfaceDesenharJogo(jogo)
@@ -219,8 +224,11 @@ func fazerLava(jogo *Jogo) {
 					for linha := y[i] + 1; linha < len(jogo.Mapa); linha++ {
 						time.Sleep(3 * time.Second)
 						posLava := Posicao{PosX: x[i], PosY: linha}
-						if (jogo.Jog[0] == posLava) || (jogo.Jog[1] == posLava) {
-							jogoFim(jogo)
+						for _, pj := range jogo.Jog {
+							if pj == posLava {
+								jogoFim(jogo)
+								break
+							}
 						}
 						jogo.Mapa[linha][x[i]] = Lava
 						interfaceDesenharJogo(jogo)

@@ -7,13 +7,13 @@ import (
 type Cor = termbox.Attribute
 
 const (
-	CorPadrao     Cor = termbox.ColorDefault
-	CorCinzaEscuro    = termbox.ColorDarkGray
-	CorVermelho       = termbox.ColorRed
-	CorVerde          = termbox.ColorGreen
-	CorParede         = termbox.ColorBlack | termbox.AttrBold | termbox.AttrDim
-	CorFundoParede    = termbox.ColorDarkGray
-	CorTexto          = termbox.ColorDarkGray
+	CorPadrao      Cor = termbox.ColorDefault
+	CorCinzaEscuro     = termbox.ColorDarkGray
+	CorVermelho        = termbox.ColorRed
+	CorVerde           = termbox.ColorGreen
+	CorParede          = termbox.ColorBlack | termbox.AttrBold | termbox.AttrDim
+	CorFundoParede     = termbox.ColorDarkGray
+	CorTexto           = termbox.ColorDarkGray
 )
 
 type EventoTeclado struct {
@@ -55,19 +55,24 @@ func interfaceDesenharJogo(jogo *Jogo) {
 	}
 
 	for _, inimigo := range jogo.InimigosTipo1 {
-  		interfaceDesenharElemento(inimigo.X, inimigo.Y, Inimigo)
+		interfaceDesenharElemento(inimigo.X, inimigo.Y, Inimigo)
 	}
 
 	for _, inimigo := range jogo.InimigosTipo2 {
-    	interfaceDesenharElemento(inimigo.X, inimigo.Y, Inimigo2)
+		interfaceDesenharElemento(inimigo.X, inimigo.Y, Inimigo2)
 	}
 
 	for _, inimigo := range jogo.InimigosTipo3 {
-    	interfaceDesenharElemento(inimigo.X, inimigo.Y, Inimigo3)
+		interfaceDesenharElemento(inimigo.X, inimigo.Y, Inimigo3)
 	}
 
-	interfaceDesenharElemento(jogo.Jog[0].PosX, jogo.Jog[0].PosY, Personagem)
-	interfaceDesenharElemento(jogo.Jog[1].PosX, jogo.Jog[1].PosY, Personagem2)
+	if len(jogo.Jog) > 0 {
+		interfaceDesenharElemento(jogo.Jog[0].PosX, jogo.Jog[0].PosY, Personagem) // você
+	}
+
+	for i := 1; i < len(jogo.Jog); i++ {
+		interfaceDesenharElemento(jogo.Jog[i].PosX, jogo.Jog[i].PosY, Personagem2) // outros
+	}
 
 	interfaceDesenharBarraDeStatus(jogo)
 
